@@ -65,7 +65,6 @@ public class Server {
     }
     public static void main(String args[]) {
         System.err.println("Server ready. register Students");
-
         try {
             Registry registry = startRegistry(null);
             server.HelloWorldImplementation obj = new server.HelloWorldImplementation();
@@ -82,6 +81,20 @@ public class Server {
                     obj.startExam();
                 }
             }
+            start = false;
+            String End_word = "end";
+            Interrupted.Interrupt interruptEnd = new Interrupted.Interrupt(obj, End_word);
+            //The tread starts reading for the key
+            interruptEnd.start();
+            synchronized (obj){
+                while(!start){
+                    System.out.println("Write \""+ End_word+"\" to start the exam");
+
+                    obj.wait();
+                    obj.endExam();
+                }
+            }
+
         } catch (Exception e) {
             System.err.println("Server exception: " + e.toString()); e.printStackTrace();
         }
