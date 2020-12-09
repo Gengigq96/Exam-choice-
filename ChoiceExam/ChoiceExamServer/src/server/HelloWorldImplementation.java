@@ -12,24 +12,28 @@ import java.util.ArrayList;
  */
 
 public class HelloWorldImplementation extends UnicastRemoteObject implements HelloWorldServer {
-
+    private boolean started = false;
     public HelloWorldImplementation() throws RemoteException {}
 
     private ArrayList<HelloWorldClient> clients = new ArrayList<HelloWorldClient>();
 
-    public void register(HelloWorldClient client){
-        System.out.println("Registering client");
-        this.clients.add(client);
+    public void register(HelloWorldClient client) throws RemoteException {
+        if (!started) {
+            System.out.println("Registering Student, Nº registered students: "+clients.size());
+            client.notifyRegist();
+            this.clients.add(client);
+        }else{
+            client.notifyExamStarted();
+        }
+    }
+    public void startExam() throws RemoteException{
+        started = true;
+        notify_StartExam();
     }
 
-    public void notify_clients(){
-        for (HelloWorldClient c:this.clients){
-            try {
-                System.out.println("calling the client");
-                c.notifyHello("hello 1");
-            }catch(RemoteException e){
-                System.out.println("error in call");
-            }
+    public void notify_StartExam() throws RemoteException{
+        for (HelloWorldClient client : clients){
+            client.notifyStartExam();
         }
     }
 }

@@ -8,5 +8,9 @@ import java.rmi.RemoteException;
  */
 public interface HelloWorldClient extends Remote {
 
-    public void notifyHello(String st) throws RemoteException;
+    public void notifyRegist() throws RemoteException;
+
+    public void notifyExamStarted() throws RemoteException;
+
+    public void notifyStartExam() throws RemoteException;
 }

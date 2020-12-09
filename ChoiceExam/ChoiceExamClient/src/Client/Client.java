@@ -16,7 +16,6 @@ public class Client {
             HelloWorldClient client = new HelloWorldClientImpl();
             HelloWorldServer stub = (HelloWorldServer) registry.lookup("Hello");
             stub.register(client);
-            System.out.println("Client registered, waiting for notification");
         } catch (Exception e) {
             System.err.println("Client exception: " + e.toString()); e.printStackTrace();
         }

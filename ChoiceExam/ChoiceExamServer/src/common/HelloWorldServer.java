@@ -10,4 +10,6 @@ import java.rmi.RemoteException;
  */
 public interface HelloWorldServer extends Remote{
     void register(HelloWorldClient client) throws RemoteException;
+    void startExam() throws RemoteException;
+    void notify_StartExam() throws RemoteException;
 }
