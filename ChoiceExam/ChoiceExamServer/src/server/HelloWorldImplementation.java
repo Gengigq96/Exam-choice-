@@ -3,10 +3,7 @@ package server;
 import common.HelloWorldClient;
 import common.HelloWorldServer;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
@@ -72,7 +69,32 @@ public class HelloWorldImplementation extends UnicastRemoteObject implements Hel
 
     @Override
     public void endExam() throws RemoteException {
-        end = true;
+        synchronized(this) {
+            end = true;
+        }
+        try (PrintWriter writer = new PrintWriter(new File("resources/grade.csv"))) {
+
+            StringBuilder sb = new StringBuilder();
+            sb.append("UniversityID");
+            sb.append(';');
+            sb.append("Answers");
+            sb.append(';');
+            sb.append("Correct");
+            sb.append('\n');
+            for (String name: grade.keySet()){
+                Integer[] results = grade.get(name);
+                sb.append(name);
+                sb.append(';');
+                sb.append(results[0]);
+                sb.append(';');
+                sb.append(results[1]);
+                sb.append('\n');
+            }
+            writer.write(sb.toString());
+
+        } catch (FileNotFoundException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     public void notify_StartExam() throws RemoteException{
@@ -102,7 +124,7 @@ public class HelloWorldImplementation extends UnicastRemoteObject implements Hel
     }
     public void sendAnswer(String id, Integer resp)throws RemoteException{
         Integer[] quest = this.grade.get(id);
-        if (this.quests[quest[0]][4].equals(resp.toString())){
+        if (this.quests[quest[0]][4].equals(resp.toString()) && !end){
             quest[1]++;
         }
         quest[0]++;
